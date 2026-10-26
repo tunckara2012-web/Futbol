@@ -10,7 +10,7 @@
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:none}
 body{margin:0;background:#0e1a12;color:#fff;font-family:system-ui,sans-serif;position:fixed;inset:0;overflow:hidden}
-canvas{position:absolute;inset:0;width:100%;height:100%}
+#c{position:absolute;inset:0;width:100%;height:100%}
 #hud{position:absolute;top:6px;left:0;right:0;text-align:center;font-weight:700;font-size:19px;text-shadow:0 1px 3px #000;pointer-events:none}
 #hud small{display:block;font-size:12px;font-weight:500;opacity:.8}
 #ban{position:absolute;top:36%;left:0;right:0;text-align:center;font-size:42px;font-weight:800;text-shadow:0 2px 6px #000;pointer-events:none}
@@ -21,7 +21,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 #btns{position:absolute;right:18px;bottom:16px;display:flex;gap:12px;align-items:flex-end}
 .b{border:0;border-radius:50%;color:#fff;font-weight:800;background:#ffffff45;width:68px;height:68px;font-size:14px}
 #bs{width:100px;height:100px;background:#e5393590;font-size:18px}
-#ov{position:absolute;inset:0;background:#000d;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:9;text-align:center;overflow:auto;padding:12px}
+#ov{position:absolute;inset:0;background:#000d;display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;z-index:9;text-align:center;overflow:auto;padding:12px}
+#ov>:first-child{margin-top:auto}#ov>:last-child{margin-bottom:auto}
 #ov h1,#ov h2,#ov p{margin:4px}
 #ov button,#ov input{font-size:18px;padding:10px 22px;border-radius:10px;border:0;margin:3px;background:#ffffff30;color:#fff;text-align:center}
 #ov input{width:130px;text-transform:uppercase}
@@ -60,12 +61,11 @@ function ld(){try{return clean(JSON.parse(localStorage.getItem('fk_team')),dTeam
 let T=[dTeam(0),dTeam(1)],MY=ld(),GT=null,ED=null,dr=-1;
 function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
 function team(){ED=JSON.parse(JSON.stringify(MY));edit()}
-function edit(){ov('<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:flex-start;max-width:760px"><div style="text-align:left"><h2>Takımım</h2>'+
+function edit(){ov('<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:flex-start;max-width:760px"><div style="text-align:left"><div style="display:flex;gap:6px;align-items:center"><h2>Takımım</h2><button onclick="sv2()">Kaydet</button><button onclick="menu()">Vazgeç</button></div>'+
  '<input maxlength="12" value="'+esc(ED.name)+'" oninput="ED.name=this.value" style="width:200px"><div>'+
- COL.map(c=>'<button onclick="ED.col=\''+c+'\';edit()" style="background:'+c+';width:34px;height:34px;padding:0;border:'+(ED.col==c?'3px solid #fff':'0')+'"></button>').join('')+'</div>'+
- ED.pl.map((q,i)=>'<div style="display:flex;gap:6px;align-items:center"><b style="width:18px">'+(i+1)+'</b><input maxlength="10" value="'+esc(q.n)+'" oninput="ED.pl['+i+'].n=this.value;dd()" style="width:150px;font-size:15px;padding:5px 8px"></div>').join('')+'</div>'+
- '<div><canvas id="ec" width="300" height="360" style="border-radius:8px"></canvas><div>'+Object.keys(FM).map(f=>'<button onclick="fm(\''+f+'\')" style="font-size:14px;padding:6px 10px">'+f+'</button>').join('')+'</div><small>Oyuncuları sürükle (kaleci sabit)</small></div></div>'+
- '<div><button onclick="sv2()">Kaydet</button><button onclick="menu()">Vazgeç</button></div>');
+ COL.map(c=>'<button onclick="ED.col=\''+c+'\';edit()" style="background:'+c+';width:30px;height:30px;padding:0;border:'+(ED.col==c?'3px solid #fff':'0')+'"></button>').join('')+'</div>'+
+ ED.pl.map((q,i)=>'<div style="display:flex;gap:6px;align-items:center"><b style="width:18px">'+(i+1)+'</b><input maxlength="10" value="'+esc(q.n)+'" oninput="ED.pl['+i+'].n=this.value;dd()" style="width:140px;font-size:14px;padding:3px 8px;margin:1px"></div>').join('')+'</div>'+
+ '<div><canvas id="ec" width="300" height="360" style="width:250px;height:300px;border-radius:8px"></canvas><div>'+Object.keys(FM).map(f=>'<button onclick="fm(\''+f+'\')" style="font-size:14px;padding:6px 10px">'+f+'</button>').join('')+'</div><small>Oyuncuları sürükle (kaleci sabit)</small></div></div>');
  const c=$('ec'),pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*360/r.height]};
  c.onpointerdown=e=>{const[px,py]=pt(e);let b=-1,bd=30;ED.pl.forEach((q,i)=>{if(!i)return;const d=Math.hypot((q.x-50)*.6-px,(q.y-50)*.6-py);if(d<bd){bd=d;b=i}});dr=b;if(b>=0)c.setPointerCapture(e.pointerId)};
  c.onpointermove=e=>{if(dr<0)return;const[px,py]=pt(e),q=ED.pl[dr];q.x=Math.max(65,Math.min(540,px/.6+50));q.y=Math.max(65,Math.min(635,py/.6+50));dd()};
